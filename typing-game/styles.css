@@ -1,0 +1,540 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: white;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Menu Styles */
+.menu-screen {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.menu-screen h2 {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.mode-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.mode-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.mode-btn:active {
+    transform: translateY(0);
+}
+
+/* Game Area Styles */
+.game-area {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.back-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+}
+
+.current-mode {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Options Styles */
+.options {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.options label {
+    font-size: 1.1rem;
+    margin-right: 20px;
+}
+
+.start-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.start-btn:hover {
+    background: #218838;
+}
+
+/* Position Mode Styles */
+.position-display {
+    text-align: center;
+}
+
+.target-letter-container {
+    margin-bottom: 30px;
+}
+
+.target-letter {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #667eea;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+.letter-instruction {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Virtual Keyboard Styles */
+.virtual-keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin: 20px 0;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 5px;
+}
+
+.key {
+    width: 45px;
+    height: 45px;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.key.highlight {
+    background: #ffd700;
+    border-color: #ffcd00;
+    color: #333;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Article Mode Styles */
+.article-display {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.article-text {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 2px solid #dee2e6;
+}
+
+.char {
+    transition: all 0.2s ease;
+}
+
+.char.correct {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.char.incorrect {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.char.current {
+    background-color: #fff3cd;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
+}
+
+.typing-area {
+    margin-bottom: 20px;
+}
+
+#typingInput {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: inherit;
+}
+
+#typingInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Sequential Mode Styles */
+.sequential-display {
+    text-align: center;
+}
+
+.progress-info {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.progress-info span {
+    margin-right: 20px;
+}
+
+.sequential-target {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Statistics Styles */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    display: block;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-item span:last-child {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Error Message Styles */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 10px 0;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Results Styles */
+.results {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 20px;
+    border: 3px solid #dee2e6;
+}
+
+.results h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+#finalStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+#finalStats div {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.score-message {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.restart-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.restart-btn:hover {
+    background: #0056b3;
+}
+
+/* Animation Styles */
+.animation {
+    margin: 20px 0;
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.animation.show {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.encourage-animation {
+    background: linear-gradient(45deg, #ff6b6b, #ffa500);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.progress-animation {
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.good-animation {
+    background: linear-gradient(45deg, #a8e6cf, #7fcdcd);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.great-animation {
+    background: linear-gradient(45deg, #ffd89b, #19547b);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.excellent-animation {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.perfect-animation {
+    background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #667eea);
+    background-size: 400% 400%;
+    animation: rainbow 3s ease infinite;
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .menu-screen {
+        padding: 20px;
+    }
+    
+    .mode-buttons {
+        max-width: 100%;
+    }
+    
+    .game-area {
+        padding: 15px;
+    }
+    
+    .target-letter {
+        font-size: 3rem;
+    }
+    
+    .sequential-target {
+        font-size: 2rem;
+    }
+    
+    .key {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .article-text {
+        font-size: 1rem;
+        padding: 15px;
+    }
+    
+    #typingInput {
+        height: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .key {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    
+    .stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .target-letter {
+        font-size: 2.5rem;
+    }
+    
+    .sequential-target {
+        font-size: 1.8rem;
+    }
+}
