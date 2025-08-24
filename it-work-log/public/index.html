@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IT部門工作日誌記錄與管理系統">
+    <meta name="theme-color" content="#2c3e50">
+    <title>資訊組工作日誌</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="工作日誌">
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMTQgMkg2Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDEyYzEuMSAwIDItLjkgMi0yVjhoLTZWMnoiIGZpbGw9IiMyYzNlNTAiLz4KICA8cG9seWdvbiBwb2ludHM9IjE2LDYgMTYsOCAxOCw4IDE4LDYgIiBmaWxsPSIjMmMzZTUwIi8+Cjwvc3ZnPg==">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>資訊組工作日誌管理系統</h1>
+        </header>
+
+        <!-- 儀表板 -->
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-card">
+                <div class="card-icon">📊</div>
+                <div class="card-content">
+                    <h3>總工單數</h3>
+                    <span class="card-value" id="totalCount">0</span>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon">⏳</div>
+                <div class="card-content">
+                    <h3>本月新增</h3>
+                    <span class="card-value" id="monthlyCount">0</span>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon">👥</div>
+                <div class="card-content">
+                    <h3>活躍部門</h3>
+                    <span class="card-value" id="activeDepartments">0</span>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon">🔧</div>
+                <div class="card-content">
+                    <h3>常見問題</h3>
+                    <span class="card-value" id="topCategory">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="filter-section">
+                <input type="text" id="searchInput" placeholder="搜尋通報人、單位、備註...">
+                <select id="statusFilter">
+                    <option value="">所有狀態</option>
+                    <option value="處理中">處理中</option>
+                    <option value="已處理">已處理</option>
+                    <option value="無法處理">無法處理</option>
+                    <option value="已提出需求">已提出需求</option>
+                </select>
+                <select id="categoryFilter">
+                    <option value="">所有類別</option>
+                    <option value="硬體">硬體</option>
+                    <option value="軟體">軟體</option>
+                    <option value="網路">網路</option>
+                    <option value="周邊">周邊</option>
+                    <option value="其他">其他</option>
+                </select>
+                <button id="searchBtn">搜尋</button>
+                <button id="resetBtn">重置</button>
+            </div>
+            <div class="action-buttons">
+                <button id="addBtn" class="primary">新增記錄</button>
+                <button id="manageBtn" class="secondary">管理選項</button>
+                <button id="statsBtn" class="secondary">統計報表</button>
+                <button id="userManageBtn" class="secondary" style="display: none;">使用者管理</button>
+                <button id="deletedRecordsBtn" class="secondary manager-only" style="display: none;">已刪除記錄</button>
+                <div class="user-info">
+                    <span id="currentUser"></span>
+                    <button id="logoutBtn" class="secondary">登出</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="workLogTable">
+                <thead>
+                    <tr>
+                        <th>流水號</th>
+                        <th>日期</th>
+                        <th>現況</th>
+                        <th>改善後</th>
+                        <th>問題類別</th>
+                        <th>單位</th>
+                        <th>分機</th>
+                        <th>通報人</th>
+                        <th>改善者</th>
+                        <th>狀態</th>
+                        <th>備註</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button id="prevBtn">上一頁</button>
+            <span id="pageInfo">第 1 頁 / 共 1 頁</span>
+            <button id="nextBtn">下一頁</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">新增工作記錄</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="logForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="currentStatus">現況 *</label>
+                        <textarea id="currentStatus" required rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="improvedStatus">改善後</label>
+                        <textarea id="improvedStatus" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="problemCategory">問題類別 *</label>
+                        <div class="custom-select-container">
+                            <select id="problemCategory" required>
+                                <option value="">請選擇</option>
+                            </select>
+                            <button type="button" id="addCategoryBtn" class="add-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">單位 *</label>
+                        <div class="custom-select-container">
+                            <select id="department" required>
+                                <option value="">請選擇</option>
+                            </select>
+                            <button type="button" id="addDepartmentBtn" class="add-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="extension">分機</label>
+                        <input type="text" id="extension">
+                    </div>
+                    <div class="form-group">
+                        <label for="reporter">通報人 *</label>
+                        <input type="text" id="reporter" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="resolver">改善者</label>
+                        <input type="text" id="resolver">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">狀態</label>
+                        <select id="status">
+                            <option value="處理中">處理中</option>
+                            <option value="已處理">已處理</option>
+                            <option value="無法處理">無法處理</option>
+                            <option value="已提出需求">已提出需求</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="notes">備註</label>
+                        <textarea id="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn">取消</button>
+                    <button type="submit" class="primary">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理選項彈窗 -->
+    <div id="manageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>管理選項清單</h2>
+                <span class="close" id="manageModalClose">&times;</span>
+            </div>
+            <div class="manage-content">
+                <!-- 單位管理 -->
+                <div class="manage-section">
+                    <h3>單位清單管理</h3>
+                    <div class="add-item-section">
+                        <input type="text" id="newDepartmentInput" placeholder="輸入新的單位名稱">
+                        <select id="newDepartmentFloorSelect">
+                            <option value="">請選擇樓層</option>
+                            <option value="B1">B1樓</option>
+                            <option value="1">1樓</option>
+                            <option value="2">2樓</option>
+                            <option value="3">3樓</option>
+                            <option value="4">4樓</option>
+                            <option value="5">5樓</option>
+                            <option value="6">6樓</option>
+                            <option value="7">7樓</option>
+                            <option value="8">8樓</option>
+                            <option value="9">9樓</option>
+                            <option value="10">10樓</option>
+                        </select>
+                        <button id="addDepartmentManageBtn" class="primary">新增單位</button>
+                    </div>
+                    <div class="items-list" id="departmentsList">
+                        <!-- 單位清單將在這裡動態生成 -->
+                    </div>
+                </div>
+
+                <!-- 問題類別管理 -->
+                <div class="manage-section">
+                    <h3>問題類別清單管理</h3>
+                    <div class="add-item-section">
+                        <input type="text" id="newCategoryInput" placeholder="輸入新的問題類別">
+                        <button id="addCategoryManageBtn" class="primary">新增類別</button>
+                    </div>
+                    <div class="items-list" id="categoriesList">
+                        <!-- 類別清單將在這裡動態生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="manageModalCancel">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 統計報表彈窗 -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h2>統計報表</h2>
+                <span class="close" id="statsModalClose">&times;</span>
+            </div>
+            <div class="stats-content">
+                <!-- 統計選項控制 -->
+                <div class="stats-controls">
+                    <div class="control-group">
+                        <label for="statsType">統計類型：</label>
+                        <select id="statsType">
+                            <option value="status">狀態分佈</option>
+                            <option value="category">問題類別</option>
+                            <option value="department">單位分佈</option>
+                            <option value="resolver">改善者統計</option>
+                            <option value="monthly">月份統計</option>
+                            <option value="personal">個人績效</option>
+                            <option value="trend">趨勢分析</option>
+                            <option value="workload">工作負載</option>
+                            <option value="efficiency">效率分析</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="chartType">圖表類型：</label>
+                        <select id="chartType">
+                            <option value="pie">圓餅圖</option>
+                            <option value="bar">長條圖</option>
+                            <option value="line">折線圖</option>
+                            <option value="doughnut">甜甜圈圖</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="dateRange">時間範圍：</label>
+                        <select id="dateRange">
+                            <option value="all">全部</option>
+                            <option value="current-month">本月</option>
+                            <option value="last-month">上個月</option>
+                            <option value="last-3-months">近3個月</option>
+                            <option value="last-6-months">近半年</option>
+                            <option value="current-quarter">本季</option>
+                            <option value="last-quarter">上季</option>
+                            <option value="current-year">本年度</option>
+                            <option value="last-year">去年</option>
+                            <option value="custom">自訂範圍</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="departmentFilter">單位篩選：</label>
+                        <select id="departmentFilter">
+                            <option value="">全部單位</option>
+                        </select>
+                    </div>
+                    <div class="control-group custom-date-range" id="customDateRange" style="display: none;">
+                        <input type="date" id="startDate">
+                        <span>至</span>
+                        <input type="date" id="endDate">
+                    </div>
+                    <button id="generateStatsBtn" class="primary">產生報表</button>
+                </div>
+
+                <!-- 圖表顯示區域 -->
+                <div class="chart-container">
+                    <canvas id="statsChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <!-- 統計數據表格 -->
+                <div class="stats-table-container">
+                    <table id="statsTable" class="stats-data-table">
+                        <thead id="statsTableHead"></thead>
+                        <tbody id="statsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 匯出選項 -->
+                <div class="export-controls">
+                    <h3>匯出選項</h3>
+                    <div class="export-buttons">
+                        <button id="printBtn" class="export-btn">🖨️ 列印</button>
+                        <button id="exportCsvBtn" class="export-btn">📊 CSV</button>
+                        <button id="exportExcelBtn" class="export-btn">📈 Excel</button>
+                        <button id="exportPdfBtn" class="export-btn">📄 PDF</button>
+                        <button id="exportPptBtn" class="export-btn">📑 PowerPoint</button>
+                        <button id="saveReportBtn" class="export-btn">💾 儲存報表</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用者管理彈窗 -->
+    <div id="userManageModal" class="modal">
+        <div class="modal-content" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h2>使用者管理</h2>
+                <span class="close" id="userManageModalClose">&times;</span>
+            </div>
+            <div class="user-manage-content">
+                <!-- 搜尋和新增控制 -->
+                <div class="user-controls">
+                    <div class="search-section">
+                        <input type="text" id="userSearchInput" placeholder="搜尋使用者...">
+                        <button id="userSearchBtn">搜尋</button>
+                    </div>
+                    <button id="addUserBtn" class="primary">新增使用者</button>
+                </div>
+
+                <!-- 使用者列表 -->
+                <div class="users-table-container">
+                    <table id="usersTable" class="users-data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>使用者名稱</th>
+                                <th>姓名</th>
+                                <th>Email</th>
+                                <th>單位</th>
+                                <th>角色</th>
+                                <th>狀態</th>
+                                <th>建立日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 分頁 -->
+                <div class="user-pagination">
+                    <button id="userPrevBtn">上一頁</button>
+                    <span id="userPageInfo">第 1 頁 / 共 1 頁</span>
+                    <button id="userNextBtn">下一頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/編輯使用者彈窗 -->
+    <div id="userFormModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="userFormTitle">新增使用者</h2>
+                <span class="close" id="userFormModalClose">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="userUsername">使用者名稱 *</label>
+                        <input type="text" id="userUsername" required>
+                    </div>
+                    <div class="form-group" id="passwordGroup">
+                        <label for="userPassword">密碼 *</label>
+                        <input type="password" id="userPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userFullName">姓名 *</label>
+                        <input type="text" id="userFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email</label>
+                        <input type="email" id="userEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="userDepartment">單位 *</label>
+                        <select id="userDepartment" required>
+                            <option value="">請選擇單位</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole">角色 *</label>
+                        <select id="userRole" required>
+                            <option value="viewer">僅觀看</option>
+                            <option value="user">一般使用者</option>
+                            <option value="manager">主管</option>
+                            <option value="admin">管理員</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>權限設定</label>
+                        <div class="permissions-grid">
+                            <label><input type="checkbox" value="read" checked disabled> 讀取資料</label>
+                            <label><input type="checkbox" value="create"> 新增記錄</label>
+                            <label><input type="checkbox" value="update"> 修改記錄</label>
+                            <label><input type="checkbox" value="delete"> 刪除記錄</label>
+                            <label><input type="checkbox" value="view_stats"> 查看統計</label>
+                            <label><input type="checkbox" value="export_data"> 匯出資料</label>
+                            <label><input type="checkbox" value="manage_users"> 管理使用者</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="userFormCancel">取消</button>
+                    <button type="submit" class="primary">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 已刪除記錄模態框 -->
+    <div id="deletedRecordsModal" class="modal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3>已刪除記錄</h3>
+                <span class="close" id="deletedRecordsModalClose">&times;</span>
+            </div>
+            <div class="deleted-records-content">
+                <div class="deleted-records-info">
+                    <p><i class="fas fa-info-circle"></i> 只有管理員和組長可以查看和恢復已刪除的記錄</p>
+                </div>
+                <div class="deleted-table-container">
+                    <table id="deletedRecordsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>工單編號</th>
+                                <th>問題描述</th>
+                                <th>問題類別</th>
+                                <th>部門</th>
+                                <th>通報人</th>
+                                <th>狀態</th>
+                                <th>刪除時間</th>
+                                <th>刪除者</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="deleted-pagination">
+                    <button id="deletedPrevBtn">上一頁</button>
+                    <span id="deletedPageInfo">第 1 頁 / 共 1 頁 (總計 0 筆)</span>
+                    <button id="deletedNextBtn">下一頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作記錄模態框 -->
+    <div id="operationLogsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>操作記錄</h3>
+                <span class="close" id="operationLogsModalClose">&times;</span>
+            </div>
+            <div class="operation-logs-content">
+                <div class="operation-logs-info">
+                    <p><i class="fas fa-history"></i> 此記錄的所有操作歷史</p>
+                </div>
+                <div class="operation-logs-list" id="operationLogsList">
+                    <!-- 操作記錄將動態載入 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入圖表和匯出相關的第三方庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.min.js"></script>
+    <script>
+        // 確保Chart.js正確加載的檢查
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('檢查Chart.js載入狀態:', typeof Chart);
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js 未能正確加載，嘗試備用CDN');
+                // 嘗試備用CDN
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/chart.js@3.9.1/dist/chart.min.js';
+                script.onload = function() {
+                    console.log('Chart.js 已從備用CDN加載');
+                };
+                script.onerror = function() {
+                    console.error('備用CDN也載入失敗');
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('Chart.js 載入成功，版本:', Chart.version);
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

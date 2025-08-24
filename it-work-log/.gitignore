@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database files
+database/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Backup files
+backups/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# Local uploads and photos
+uploads/
+photos/
+
+# IIS deployment files (Windows specific)
+deploy_to_iis.bat
+check_iis_readiness.bat
+web.config
+IIS部署指南.md
+setup_windows.bat
+WINDOWS_SETUP.md
+
+# Additional deployment configs
+static_demo.html
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# PM2 configuration
+ecosystem.config.js
+.pm2/

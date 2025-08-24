@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  it-work-log:
+    build: .
+    container_name: it-work-log-app
+    ports:
+      - "3009:3009"
+    environment:
+      - NODE_ENV=production
+      - PORT=3009
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-change-in-production}
+      - JWT_EXPIRES_IN=24h
+    volumes:
+      - ./database:/app/database
+      - ./uploads:/app/uploads
+      - ./backups:/app/backups
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3009/api/auth/me", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add nginx reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: it-work-log-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./ssl:/etc/nginx/ssl
+  #   depends_on:
+  #     - it-work-log
+  #   restart: unless-stopped
+
+volumes:
+  database_data:
+  uploads_data:
+  backups_data:
