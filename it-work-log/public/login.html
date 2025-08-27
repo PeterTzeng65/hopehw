@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 - 資訊組工作日誌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .default-account {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .default-account h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .default-account p {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>資訊組工作日誌</h1>
+            <p>管理系統登入</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">使用者名稱</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密碼</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                登入
+            </button>
+            
+            <div class="loading" id="loading"></div>
+        </form>
+
+        <div class="default-account">
+            <h4>預設管理員帳號</h4>
+            <p>帳號: admin<br>密碼: admin123</p>
+        </div>
+    </div>
+
+    <script>
+        class LoginManager {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                // 檢查是否已登入
+                this.checkExistingAuth();
+                
+                // 綁定事件
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Enter 鍵登入
+                document.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.handleLogin();
+                    }
+                });
+            }
+
+            checkExistingAuth() {
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                    // 驗證 token 是否有效
+                    fetch('/api/auth/me', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // 已登入，重導向到主頁
+                            window.location.href = '/';
+                        } else {
+                            // Token 無效，清除
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('user_info');
+                        }
+                    })
+                    .catch(() => {
+                        // 網路錯誤，清除
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('user_info');
+                    });
+                }
+            }
+
+            async handleLogin() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+
+                if (!username || !password) {
+                    this.showError('請輸入使用者名稱和密碼');
+                    return;
+                }
+
+                this.setLoading(true);
+                this.hideError();
+
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // 登入成功
+                        localStorage.setItem('auth_token', data.token);
+                        localStorage.setItem('user_info', JSON.stringify(data.user));
+                        
+                        // 重導向到主頁
+                        window.location.href = '/';
+                    } else {
+                        // 登入失敗
+                        this.showError(data.error || '登入失敗');
+                    }
+                } catch (error) {
+                    console.error('登入錯誤:', error);
+                    this.showError('連接伺服器失敗，請稍後再試');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            showError(message) {
+                const errorElement = document.getElementById('errorMessage');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            hideError() {
+                const errorElement = document.getElementById('errorMessage');
+                errorElement.style.display = 'none';
+            }
+
+            setLoading(loading) {
+                const loginBtn = document.getElementById('loginBtn');
+                const loadingElement = document.getElementById('loading');
+
+                if (loading) {
+                    loginBtn.disabled = true;
+                    loginBtn.textContent = '登入中...';
+                    loadingElement.style.display = 'block';
+                } else {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '登入';
+                    loadingElement.style.display = 'none';
+                }
+            }
+        }
+
+        // 初始化登入管理器
+        new LoginManager();
+    </script>
+</body>
+</html>

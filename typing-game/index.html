@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Typing Practice Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>English Typing Practice Game</h1>
+        </header>
+
+        <!-- Mode Selection -->
+        <div id="menu" class="menu-screen">
+            <h2>Choose Practice Mode</h2>
+            <div class="mode-buttons">
+                <button id="positionMode" class="mode-btn">Keyboard Position Practice</button>
+                <button id="articleMode" class="mode-btn">Article Typing Practice</button>
+                <button id="sequentialMode" class="mode-btn">Sequential Keyboard Practice</button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea" class="game-area hidden">
+            <!-- Back to Menu -->
+            <button id="backToMenu" class="back-btn">← Back to Menu</button>
+
+            <!-- Current Mode Display -->
+            <div id="currentMode" class="current-mode"></div>
+
+            <!-- Sequential Mode Options -->
+            <div id="sequentialOptions" class="options hidden">
+                <label>
+                    <input type="checkbox" id="includeNumbers"> Include Numbers (1-0)
+                </label>
+                <button id="startSequential" class="start-btn">Start Practice</button>
+            </div>
+
+            <!-- Game Display -->
+            <div id="gameDisplay" class="game-display">
+                <!-- Position Mode Display -->
+                <div id="positionDisplay" class="position-display hidden">
+                    <div class="target-letter-container">
+                        <div id="targetLetter" class="target-letter"></div>
+                        <div id="letterInstruction" class="letter-instruction">Press the highlighted key</div>
+                    </div>
+                    <div id="virtualKeyboard" class="virtual-keyboard"></div>
+                </div>
+
+                <!-- Article Mode Display -->
+                <div id="articleDisplay" class="article-display hidden">
+                    <div id="articleText" class="article-text"></div>
+                    <div id="typingArea" class="typing-area">
+                        <textarea id="typingInput" placeholder="Start typing here..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Sequential Mode Display -->
+                <div id="sequentialDisplay" class="sequential-display hidden">
+                    <div class="progress-info">
+                        <span id="currentSequence">Current: </span>
+                        <span id="sequenceProgress">Progress: 0/26</span>
+                    </div>
+                    <div id="sequentialTarget" class="sequential-target"></div>
+                    <div id="sequentialKeyboard" class="virtual-keyboard"></div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div id="stats" class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Correct:</span>
+                    <span id="correctCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Incorrect:</span>
+                    <span id="incorrectCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Accuracy:</span>
+                    <span id="accuracy">100%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Time:</span>
+                    <span id="timer">2:00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Speed:</span>
+                    <span id="speed">0 LPM</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Reaction:</span>
+                    <span id="reactionTime">0ms</span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message hidden">Wrong key! Try again.</div>
+
+            <!-- Results -->
+            <div id="results" class="results hidden">
+                <h3>Practice Complete!</h3>
+                <div id="finalStats"></div>
+                <div id="scoreMessage" class="score-message"></div>
+                <div id="animation" class="animation"></div>
+                <button id="restartPractice" class="restart-btn">Practice Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

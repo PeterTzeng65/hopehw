@@ -1,0 +1,33 @@
+{
+  "name": "it-work-log",
+  "version": "1.0.0",
+  "description": "IT工作日誌管理系統",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "prod": "NODE_ENV=production node src/server.js",
+    "backup": "node src/backup.js",
+    "restore": "node src/restore.js",
+    "install-production": "npm ci --only=production"
+  },
+  "keywords": [
+    "IT",
+    "工作日誌",
+    "管理系統"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.32.6",
+    "sqlite3": "^5.1.7",
+    "uuid": "^9.0.1"
+  }
+}
