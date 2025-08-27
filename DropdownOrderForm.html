@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAYI 滿溢茶飲 - 公司團購系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .customer-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .customization-section {
+            background: #e8f4fd;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .order-section {
+            background: #f0f8e8;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .order-item select {
+            min-width: 200px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        
+        .quantity-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .price-display {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ff6b6b;
+            min-width: 80px;
+        }
+        
+        .add-item-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .add-item-btn:hover {
+            background: #218838;
+        }
+        
+        .summary-section {
+            background: linear-gradient(45deg, #48c9b0, #16a085);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .order-list {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .total-price {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: transform 0.3s;
+            min-width: 250px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧋 MAYI 滿溢茶飲</h1>
+            <p>公司團購訂購系統 - 下拉選單版</p>
+        </div>
+        
+        <div class="form-section">
+            <!-- 客戶資訊 -->
+            <div class="customer-info">
+                <h3 style="margin-bottom: 20px; color: #333;">👤 訂購者資訊</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerName">訂購者姓名/組別名稱</label>
+                        <input type="text" id="customerName" placeholder="例如：王小明、財務部、研發組">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerContact">聯絡方式</label>
+                        <input type="text" id="customerContact" placeholder="分機或手機號碼">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 提示說明 -->
+            <div style="background: #e8f4fd; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center;">
+                <h3 style="color: #333; margin-bottom: 10px;">💡 使用說明</h3>
+                <p style="color: #666; margin: 0;">每筆飲料都可以個別設定冰塊、糖分、奶量程度，讓每個人都能客製化自己喜歡的口味！</p>
+            </div>
+            
+            <!-- 訂購區域 -->
+            <div class="order-section">
+                <h3 style="margin-bottom: 20px; color: #333;">🛒 選擇飲料</h3>
+                <button class="add-item-btn" onclick="addOrderItem()">+ 新增飲料</button>
+                <div id="orderItems"></div>
+            </div>
+            
+            <!-- 訂單摘要 -->
+            <div class="summary-section">
+                <div class="summary-title">📋 訂單摘要</div>
+                <div class="order-list" id="orderSummary">
+                    <div style="text-align: center; opacity: 0.7;">尚未選擇任何飲料</div>
+                </div>
+                <div class="total-price" id="totalPrice">總計：$0</div>
+            </div>
+            
+            <!-- 備註 -->
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label for="customerNotes">📝 備註</label>
+                <textarea id="customerNotes" rows="3" placeholder="特殊需求或備註事項"></textarea>
+            </div>
+            
+            <button class="submit-btn" id="submitBtn" onclick="submitOrder()">
+                🚀 送出團購訂單
+            </button>
+            
+            <!-- 菜單圖片區域 -->
+            <div style="margin-top: 40px; text-align: center;">
+                <h3 style="color: #333; margin-bottom: 20px;">📋 MAYI 滿溢茶飲完整菜單</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div style="text-align: center; padding: 40px; background: #f0f0f0; border-radius: 8px; color: #666;">
+                        📋 請參考 MAYI 滿溢茶飲完整菜單<br>
+                        <small>菜單圖片位置：/mnt/c/Users/peter/Downloads/83fff607ecb5c850026f7ef5c27fb3e92258d770.jpg</small>
+                    </div>
+                    <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                        💡 參考完整菜單選擇您喜歡的飲料，每種飲料都可以個別客製化冰塊、糖分、奶量程度！
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 飲料菜單資料 - 按照圖片的分類
+        const drinkCategories = {
+            '找奶茶': [
+                {name: '可可風味奶茶', sizes: [{size: 'M', price: 50}, {size: 'L', price: 60}]},
+                {name: '仙草凍奶茶', sizes: [{size: '單一尺寸', price: 50}]},
+                {name: '茉莉奶綠', sizes: [{size: 'M', price: 45}, {size: 'L', price: 50}]},
+                {name: '滿溢烤香奶茶', sizes: [{size: 'M', price: 50}, {size: 'L', price: 55}]},
+                {name: '滿溢珍珠奶茶', sizes: [{size: 'M', price: 50}, {size: 'L', price: 55}]},
+                {name: '炭燒烏龍奶茶', sizes: [{size: 'M', price: 50}, {size: 'L', price: 55}]},
+                {name: '布丁伯爵奶茶', sizes: [{size: 'M', price: 50}, {size: 'L', price: 60}]},
+                {name: '可可環果奶', sizes: [{size: 'M', price: 60}, {size: 'L', price: 65}]},
+                {name: '手炒黑糖鐵觀音奶', sizes: [{size: 'M', price: 60}, {size: 'L', price: 75}]}
+            ],
+            '找口才': [
+                {name: '原萃經典原茶', sizes: [{size: '單一尺寸', price: 30}]},
+                {name: '嚴典伯爵紅茶', sizes: [{size: '單一尺寸', price: 30}]},
+                {name: '熱帶醇香紅茶', sizes: [{size: '單一尺寸', price: 30}]},
+                {name: '茉莉原萃綠茶', sizes: [{size: '單一尺寸', price: 30}]},
+                {name: '炭焙高山烏龍茶', sizes: [{size: '單一尺寸', price: 35}]},
+                {name: '青逸四季春', sizes: [{size: '單一尺寸', price: 35}]},
+                {name: '蜜柚高麗綠', sizes: [{size: '單一尺寸', price: 35}]}
+            ],
+            '找烏味': [
+                {name: '嚴選雲南昆明茶奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '茉莉原萃綠茶奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '蜜柚高麗綠茶奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '炭焙高山烏龍奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '檸檬四季春奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '熱帶醇香紅茶奶霜', sizes: [{size: '單一尺寸', price: 55}]},
+                {name: '紅玉醇香紅茶奶霜', sizes: [{size: '單一尺寸', price: 55}]}
+            ],
+            '找口感': [
+                {name: '異漾凍飲', sizes: [{size: 'M', price: 70}, {size: 'L', price: 75}]},
+                {name: '貴妃荔枝紅茶凍飲', sizes: [{size: 'M', price: 75}, {size: 'L', price: 80}]},
+                {name: '手沖紫奶師凍飲', sizes: [{size: 'M', price: 75}, {size: 'L', price: 80}]}
+            ],
+            '清爽微酸打': [
+                {name: '冰鎮蘋果氣泡飲', sizes: [{size: '單一尺寸', price: 75}]},
+                {name: '冰鎮百香果氣泡飲', sizes: [{size: '單一尺寸', price: 75}]},
+                {name: '冰鎮綜合莓果氣泡飲', sizes: [{size: '單一尺寸', price: 80}]},
+                {name: '冰鎮鳳果氣泡飲', sizes: [{size: '單一尺寸', price: 80}]}
+            ],
+            '季節限定': [
+                {name: '古意人柿橘汁', sizes: [{size: 'M', price: 49}, {size: 'L', price: 55}]},
+                {name: '蘋果肉桂紅茶飲', sizes: [{size: 'M', price: 49}, {size: 'L', price: 55}]},
+                {name: '金桔檸檬蜂蜜氣泡', sizes: [{size: 'M', price: 49}, {size: 'L', price: 55}]},
+                {name: '暖薑檸奶(熱)', sizes: [{size: '單一尺寸', price: 49}]}
+            ]
+        };
+        
+        let orderItemCounter = 0;
+        
+        function addOrderItem() {
+            orderItemCounter++;
+            const orderItemsContainer = document.getElementById('orderItems');
+            
+            const orderItem = document.createElement('div');
+            orderItem.className = 'order-item';
+            orderItem.id = `orderItem_${orderItemCounter}`;
+            
+            orderItem.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <select id="category_${orderItemCounter}" onchange="updateDrinkOptions(${orderItemCounter})">
+                        <option value="">選擇分類</option>
+                        ${Object.keys(drinkCategories).map(category => 
+                            `<option value="${category}">${category}</option>`
+                        ).join('')}
+                    </select>
+                    
+                    <select id="drink_${orderItemCounter}" onchange="updateSizeOptions(${orderItemCounter})" disabled>
+                        <option value="">請先選擇分類</option>
+                    </select>
+                    
+                    <select id="size_${orderItemCounter}" onchange="updatePrice(${orderItemCounter})" disabled>
+                        <option value="">請先選擇飲料</option>
+                    </select>
+                    
+                    <div class="quantity-control">
+                        <button type="button" class="quantity-btn" onclick="changeQuantity(${orderItemCounter}, -1)">−</button>
+                        <input type="number" class="quantity-input" id="quantity_${orderItemCounter}" 
+                               value="1" min="1" max="50" onchange="updatePrice(${orderItemCounter})">
+                        <button type="button" class="quantity-btn" onclick="changeQuantity(${orderItemCounter}, 1)">+</button>
+                    </div>
+                    
+                    <div class="price-display" id="price_${orderItemCounter}">$0</div>
+                    
+                    <button type="button" class="remove-btn" onclick="removeOrderItem(${orderItemCounter})">×</button>
+                </div>
+                
+                <!-- 個別客製化選項 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 0.9em; font-weight: bold; color: #666; margin-bottom: 5px;">❄️ 冰塊程度</label>
+                        <select id="ice_${orderItemCounter}" style="font-size: 0.9em;" onchange="updateSummary()">
+                            <option value="正常冰">正常冰</option>
+                            <option value="少冰">少冰</option>
+                            <option value="微冰">微冰</option>
+                            <option value="去冰">去冰</option>
+                            <option value="熱飲">熱飲</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 0.9em; font-weight: bold; color: #666; margin-bottom: 5px;">🍯 糖分程度</label>
+                        <select id="sugar_${orderItemCounter}" style="font-size: 0.9em;" onchange="updateSummary()">
+                            <option value="正常糖">正常糖</option>
+                            <option value="少糖">少糖</option>
+                            <option value="半糖">半糖</option>
+                            <option value="微糖">微糖</option>
+                            <option value="無糖">無糖</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 0.9em; font-weight: bold; color: #666; margin-bottom: 5px;">🥛 奶量程度</label>
+                        <select id="milk_${orderItemCounter}" style="font-size: 0.9em;" onchange="updateSummary()">
+                            <option value="正常奶">正常奶</option>
+                            <option value="少奶">少奶</option>
+                            <option value="多奶">多奶</option>
+                            <option value="濃奶">濃奶</option>
+                            <option value="無奶">無奶</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            orderItemsContainer.appendChild(orderItem);
+        }
+        
+        function updateDrinkOptions(itemId) {
+            const categorySelect = document.getElementById(`category_${itemId}`);
+            const drinkSelect = document.getElementById(`drink_${itemId}`);
+            const sizeSelect = document.getElementById(`size_${itemId}`);
+            const priceDisplay = document.getElementById(`price_${itemId}`);
+            
+            const selectedCategory = categorySelect.value;
+            
+            // 重置後續選項
+            drinkSelect.innerHTML = '<option value="">選擇飲料</option>';
+            sizeSelect.innerHTML = '<option value="">請先選擇飲料</option>';
+            sizeSelect.disabled = true;
+            priceDisplay.textContent = '$0';
+            
+            if (selectedCategory && drinkCategories[selectedCategory]) {
+                drinkSelect.disabled = false;
+                drinkCategories[selectedCategory].forEach(drink => {
+                    drinkSelect.innerHTML += `<option value="${drink.name}">${drink.name}</option>`;
+                });
+            } else {
+                drinkSelect.disabled = true;
+            }
+            
+            updateSummary();
+        }
+        
+        function updateSizeOptions(itemId) {
+            const categorySelect = document.getElementById(`category_${itemId}`);
+            const drinkSelect = document.getElementById(`drink_${itemId}`);
+            const sizeSelect = document.getElementById(`size_${itemId}`);
+            const priceDisplay = document.getElementById(`price_${itemId}`);
+            
+            const selectedCategory = categorySelect.value;
+            const selectedDrink = drinkSelect.value;
+            
+            // 重置尺寸選項
+            sizeSelect.innerHTML = '<option value="">選擇尺寸</option>';
+            priceDisplay.textContent = '$0';
+            
+            if (selectedCategory && selectedDrink && drinkCategories[selectedCategory]) {
+                const drink = drinkCategories[selectedCategory].find(d => d.name === selectedDrink);
+                if (drink) {
+                    sizeSelect.disabled = false;
+                    drink.sizes.forEach(sizeInfo => {
+                        sizeSelect.innerHTML += `<option value="${sizeInfo.size}" data-price="${sizeInfo.price}">${sizeInfo.size} - $${sizeInfo.price}</option>`;
+                    });
+                }
+            } else {
+                sizeSelect.disabled = true;
+            }
+            
+            updateSummary();
+        }
+        
+        function updatePrice(itemId) {
+            const sizeSelect = document.getElementById(`size_${itemId}`);
+            const priceDisplay = document.getElementById(`price_${itemId}`);
+            const quantityInput = document.getElementById(`quantity_${itemId}`);
+            
+            const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+            const price = selectedOption ? parseInt(selectedOption.dataset.price) || 0 : 0;
+            const quantity = parseInt(quantityInput.value) || 1;
+            
+            priceDisplay.textContent = `$${price * quantity}`;
+            updateSummary();
+        }
+        
+        function changeQuantity(itemId, change) {
+            const quantityInput = document.getElementById(`quantity_${itemId}`);
+            let newQuantity = parseInt(quantityInput.value) + change;
+            newQuantity = Math.max(1, Math.min(50, newQuantity));
+            quantityInput.value = newQuantity;
+            updatePrice(itemId);
+        }
+        
+        function removeOrderItem(itemId) {
+            const orderItem = document.getElementById(`orderItem_${itemId}`);
+            orderItem.remove();
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const orderSummary = document.getElementById('orderSummary');
+            const totalPrice = document.getElementById('totalPrice');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            let summaryHTML = '';
+            let total = 0;
+            let hasValidItems = false;
+            
+            // 檢查所有訂單項目
+            const orderItems = document.querySelectorAll('[id^="orderItem_"]');
+            orderItems.forEach(item => {
+                const itemId = item.id.split('_')[1];
+                const categorySelect = document.getElementById(`category_${itemId}`);
+                const drinkSelect = document.getElementById(`drink_${itemId}`);
+                const sizeSelect = document.getElementById(`size_${itemId}`);
+                const quantityInput = document.getElementById(`quantity_${itemId}`);
+                
+                if (categorySelect && drinkSelect && sizeSelect && quantityInput) {
+                    const category = categorySelect.value;
+                    const drink = drinkSelect.value;
+                    const size = sizeSelect.value;
+                    const quantity = parseInt(quantityInput.value) || 0;
+                    
+                    if (category && drink && size && quantity > 0) {
+                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                        const price = parseInt(selectedOption.dataset.price) || 0;
+                        const itemTotal = price * quantity;
+                        
+                        // 取得個別客製化設定
+                        const iceSelect = document.getElementById(`ice_${itemId}`);
+                        const sugarSelect = document.getElementById(`sugar_${itemId}`);
+                        const milkSelect = document.getElementById(`milk_${itemId}`);
+                        
+                        const ice = iceSelect ? iceSelect.value : '正常冰';
+                        const sugar = sugarSelect ? sugarSelect.value : '正常糖';
+                        const milk = milkSelect ? milkSelect.value : '正常奶';
+                        
+                        summaryHTML += `
+                            <div class="summary-item" style="flex-direction: column; align-items: flex-start;">
+                                <div style="display: flex; justify-content: space-between; width: 100%;">
+                                    <span>${drink} (${size}) × ${quantity}</span>
+                                    <span>$${itemTotal}</span>
+                                </div>
+                                <div style="font-size: 0.8em; color: rgba(255,255,255,0.8); margin-top: 5px;">
+                                    ${ice} | ${sugar} | ${milk}
+                                </div>
+                            </div>
+                        `;
+                        
+                        total += itemTotal;
+                        hasValidItems = true;
+                    }
+                }
+            });
+            
+            if (!hasValidItems) {
+                summaryHTML = '<div style="text-align: center; opacity: 0.7;">尚未選擇任何飲料</div>';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.disabled = false;
+            }
+            
+            orderSummary.innerHTML = summaryHTML;
+            totalPrice.textContent = `總計：$${total}`;
+        }
+        
+        async function submitOrder() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerContact = document.getElementById('customerContact').value.trim();
+            const customerNotes = document.getElementById('customerNotes').value.trim();
+            
+            if (!customerName || !customerContact) {
+                alert('請填寫訂購者姓名和聯絡方式！');
+                return;
+            }
+            
+            // 收集所有訂單項目
+            let orderItems = [];
+            let totalPrice = 0;
+            let totalQuantity = 0;
+            let detailedItems = [];
+            
+            const orderItemElements = document.querySelectorAll('[id^="orderItem_"]');
+            orderItemElements.forEach(item => {
+                const itemId = item.id.split('_')[1];
+                const categorySelect = document.getElementById(`category_${itemId}`);
+                const drinkSelect = document.getElementById(`drink_${itemId}`);
+                const sizeSelect = document.getElementById(`size_${itemId}`);
+                const quantityInput = document.getElementById(`quantity_${itemId}`);
+                const iceSelect = document.getElementById(`ice_${itemId}`);
+                const sugarSelect = document.getElementById(`sugar_${itemId}`);
+                const milkSelect = document.getElementById(`milk_${itemId}`);
+                
+                if (categorySelect && drinkSelect && sizeSelect && quantityInput) {
+                    const category = categorySelect.value;
+                    const drink = drinkSelect.value;
+                    const size = sizeSelect.value;
+                    const quantity = parseInt(quantityInput.value) || 0;
+                    
+                    if (category && drink && size && quantity > 0) {
+                        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+                        const price = parseInt(selectedOption.dataset.price) || 0;
+                        const itemTotal = price * quantity;
+                        
+                        // 取得個別客製化設定
+                        const ice = iceSelect ? iceSelect.value : '正常冰';
+                        const sugar = sugarSelect ? sugarSelect.value : '正常糖';
+                        const milk = milkSelect ? milkSelect.value : '正常奶';
+                        
+                        orderItems.push(`${drink} (${size}) × ${quantity} = $${itemTotal}`);
+                        detailedItems.push(`${drink} (${size}) × ${quantity} [${ice}|${sugar}|${milk}] = $${itemTotal}`);
+                        totalPrice += itemTotal;
+                        totalQuantity += quantity;
+                    }
+                }
+            });
+            
+            if (orderItems.length === 0) {
+                alert('請至少選擇一種飲料！');
+                return;
+            }
+            
+            // 顯示訂單確認
+            const orderSummary = detailedItems.join('\\n');
+            const confirmMsg = `📋 訂單確認\\n\\n👤 訂購者：${customerName}\\n📱 聯絡方式：${customerContact}\\n\\n🛒 訂購內容：\\n${orderSummary}\\n\\n🔢 總數量：${totalQuantity} 杯\\n💰 總金額：$${totalPrice}\\n📝 備註：${customerNotes || '無'}\\n\\n確認送出訂單？`;
+            
+            if (confirm(confirmMsg)) {
+                // 準備提交到 Google 表單
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '🚀 訂單提交中...';
+                
+                try {
+                    // 提交到 Google 表單
+                    await submitToGoogleForm(customerName, customerContact, detailedItems, totalQuantity, totalPrice, customerNotes);
+                    
+                    alert('✅ 訂單送出成功！\\n\\n請等候通知取貨。');
+                    
+                    // 重置表單
+                    resetForm();
+                    
+                } catch (error) {
+                    console.error('提交錯誤:', error);
+                    alert('❌ 訂單提交失敗，請稍後再試或聯絡管理員。');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🚀 送出團購訂單';
+                }
+            }
+        }
+        
+        // 提交到 Google 表單
+        async function submitToGoogleForm(customerName, customerContact, detailedItems, totalQuantity, totalPrice, customerNotes) {
+            const FORM_ID = '1jVd-_I2nwEYedRvts3UoDBYEdSQgsneBIhYKU4TtmWY';
+            const formUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+            
+            // 準備表單資料
+            const formData = new FormData();
+            formData.append('entry.878366553', customerName);              // 訂購者
+            formData.append('entry.2070235088', customerContact);          // 聯絡方式
+            formData.append('entry.1322130814', '個別設定');               // 冰塊程度（因為每筆不同）
+            formData.append('entry.1922824028', '個別設定');               // 糖分程度（因為每筆不同）
+            formData.append('entry.1681252556', '個別設定');               // 奶量程度（因為每筆不同）
+            formData.append('entry.543342959', detailedItems.join('\\n')); // 訂購清單
+            formData.append('entry.782115237', totalQuantity.toString());  // 總數量
+            formData.append('entry.127377884', totalPrice.toString());     // 總金額
+            formData.append('entry.81926156', customerNotes || '無');       // 備註
+            
+            // 提交表單
+            await fetch(formUrl, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            });
+        }
+        
+        function resetForm() {
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerContact').value = '';
+            document.getElementById('customerNotes').value = '';
+            
+            // 清空所有訂單項目
+            document.getElementById('orderItems').innerHTML = '';
+            orderItemCounter = 0;
+            
+            // 重新添加一個空的訂單項目
+            addOrderItem();
+            
+            updateSummary();
+        }
+        
+        // 初始化：添加第一個訂單項目
+        document.addEventListener('DOMContentLoaded', function() {
+            addOrderItem();
+        });
+    </script>
+</body>
+</html>

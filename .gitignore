@@ -1,0 +1,35 @@
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# 編輯器設定
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 暫存檔案
+*.tmp
+*.temp
+~*
+
+# 日誌檔案
+*.log
+
+# Claude Code 專案檔案
+.claude/
+
+# 測試檔案
+*test*.html
+Test*.html
+Simple*.html
+Direct*.html
+
+# 備份檔案
+*.bak
+*.backup
+
+# 敏感資訊
+config.json
+secrets.json
+.env
